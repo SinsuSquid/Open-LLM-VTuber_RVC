@@ -39,4 +39,6 @@ rvc_config:
 
 #### RVC Voice Model
 - **Model**: `infamous_miku_v2` (Weights: `infamous_miku_v2.pth`, Index: `added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index`)
+- **Source**: [HuggingFace - javinfamous/infamous_miku_v2](https://huggingface.co/javinfamous/infamous_miku_v2)
+- **Creator**: [javinfamous](https://huggingface.co/javinfamous)
 - **Directory**: `models/rvc/infamous_miku_v2/`
