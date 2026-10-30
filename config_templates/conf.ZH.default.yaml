@@ -448,6 +448,20 @@ character_config:
       volume: 1.0 # 语音音量（0.5 到 2.0）
       speed: 1.0 # 语音速度（0.6 到 1.5）
 
+  # =================== RVC 声音转换 ===================
+  rvc_config:
+    enabled: false # 设置为 true 启用 RVC 声音转换后处理
+    model_path: 'models/rvc/infamous_miku_v2/infamous_miku_v2.pth' # .pth 模型文件路径
+    index_path: 'models/rvc/infamous_miku_v2/added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index' # .index 特征索引文件路径（可选）
+    device: 'cpu:0' # 'cpu:0' 或 'cuda:0'
+    f0_up_key: 5 # 变调（半音，+5 适合动漫/初音未来）
+    f0_method: 'pm' # 'pm'（CPU上最快），'harvest'，'crepe'，'rmvpe'
+    index_rate: 0.75 # 特征检索比率（0.0 - 1.0）
+    filter_radius: 3 # 中值滤波半径（>=3 可减少呼吸杂音）
+    resample_sr: 0 # 后处理重采样目标采样率（0 表示模型默认）
+    rms_mix_rate: 0.25 # 音量包络混合比（0.0 - 1.0）
+    protect: 0.33 # 保护清辅音和呼吸声（0.0 - 0.5）
+
   # =================== Voice Activity Detection ===================
   vad_config:
     vad_model: null

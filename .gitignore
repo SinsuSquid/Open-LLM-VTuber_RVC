@@ -55,6 +55,7 @@ asset
 models/*
 !models/piper_voice
 models/piper_voice/*
+vits-piper-*
 
 
 # Legacy and specific directories

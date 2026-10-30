@@ -453,6 +453,20 @@ character_config:
       volume: 1.0 # Voice volume (0.5 to 2.0)
       speed: 1.0 # Voice speed (0.6 to 1.5)
 
+  # =================== RVC Voice Conversion ===================
+  rvc_config:
+    enabled: false # Set to true to enable RVC voice conversion post-processing
+    model_path: 'models/rvc/infamous_miku_v2/infamous_miku_v2.pth' # Path to .pth model
+    index_path: 'models/rvc/infamous_miku_v2/added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index' # Path to .index file (optional)
+    device: 'cpu:0' # 'cpu:0' or 'cuda:0'
+    f0_up_key: 5 # Pitch shift in semitones (+5 for anime/Miku, +12 for octave up)
+    f0_method: 'pm' # 'pm' (fastest on CPU), 'harvest', 'crepe', 'rmvpe'
+    index_rate: 0.75 # Feature retrieval index rate (0.0 - 1.0)
+    filter_radius: 3 # Median filter radius (>=3 reduces breathiness)
+    resample_sr: 0 # Target sample rate (0 for model default)
+    rms_mix_rate: 0.25 # Volume envelope mixing rate (0.0 - 1.0)
+    protect: 0.33 # Protect voiceless consonants and breath sounds (0.0 - 0.5)
+
   # =================== Voice Activity Detection ===================
   vad_config:
     vad_model: null

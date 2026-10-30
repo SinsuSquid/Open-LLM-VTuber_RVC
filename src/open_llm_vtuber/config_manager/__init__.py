@@ -42,6 +42,7 @@ from .vad import (
     VADConfig,
     SileroVADConfig,
 )
+from .rvc import RVCConfig
 from .tts_preprocessor import TTSPreprocessorConfig, TranslatorConfig, DeepLXConfig
 from .i18n import I18nMixin, Description, MultiLingualString
 from .agent import (

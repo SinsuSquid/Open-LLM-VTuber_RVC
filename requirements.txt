@@ -1071,6 +1071,8 @@ ruamel-yaml==0.19.1
     # via open-llm-vtuber
 ruff==0.14.14
     # via open-llm-vtuber
+rvc-python
+    # via open-llm-vtuber
 scipy==1.15.3 ; python_full_version < '3.11'
     # via open-llm-vtuber
 scipy==1.17.0 ; python_full_version >= '3.11'

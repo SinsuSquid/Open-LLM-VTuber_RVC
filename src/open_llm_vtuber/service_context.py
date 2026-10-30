@@ -1,6 +1,6 @@
 import os
 import json
-from typing import Callable
+from typing import Callable, Optional
 from loguru import logger
 from fastapi import WebSocket
 
@@ -11,6 +11,7 @@ from .tts.tts_interface import TTSInterface
 from .vad.vad_interface import VADInterface
 from .agent.agents.agent_interface import AgentInterface
 from .translate.translate_interface import TranslateInterface
+from .rvc import RVCEngine, RVCTTSWrapper
 
 from .mcpp.server_registry import ServerRegistry
 from .mcpp.tool_manager import ToolManager
@@ -32,6 +33,7 @@ from .config_manager import (
     ASRConfig,
     TTSConfig,
     VADConfig,
+    RVCConfig,
     TranslatorConfig,
     read_yaml,
     validate_config,
@@ -50,6 +52,7 @@ class ServiceContext:
         self.live2d_model: Live2dModel = None
         self.asr_engine: ASRInterface = None
         self.tts_engine: TTSInterface = None
+        self.rvc_engine: RVCEngine | None = None
         self.agent_engine: AgentInterface = None
         # translate_engine can be none if translation is disabled
         self.vad_engine: VADInterface | None = None
@@ -82,6 +85,7 @@ class ServiceContext:
             f"    Config: {json.dumps(self.character_config.asr_config.model_dump(), indent=6) if self.character_config.asr_config else 'None'}\n"
             f"  TTS Engine: {type(self.tts_engine).__name__ if self.tts_engine else 'Not Loaded'}\n"
             f"    Config: {json.dumps(self.character_config.tts_config.model_dump(), indent=6) if self.character_config.tts_config else 'None'}\n"
+            f"  RVC Engine: {'Enabled (' + self.rvc_engine.model_path + ')' if self.rvc_engine else 'Disabled'}\n"
             f"  LLM Engine: {type(self.agent_engine).__name__ if self.agent_engine else 'Not Loaded'}\n"
             f"    Agent Config: {json.dumps(self.character_config.agent_config.model_dump(), indent=6) if self.character_config.agent_config else 'None'}\n"
             f"  VAD Engine: {type(self.vad_engine).__name__ if self.vad_engine else 'Not Loaded'}\n"
@@ -209,6 +213,7 @@ class ServiceContext:
         vad_engine: VADInterface,
         agent_engine: AgentInterface,
         translate_engine: TranslateInterface | None,
+        rvc_engine: RVCEngine | None = None,
         mcp_server_registery: ServerRegistry | None = None,
         tool_adapter: ToolAdapter | None = None,
         send_text: Callable = None,
@@ -229,6 +234,7 @@ class ServiceContext:
         self.live2d_model = live2d_model
         self.asr_engine = asr_engine
         self.tts_engine = tts_engine
+        self.rvc_engine = rvc_engine
         self.vad_engine = vad_engine
         self.agent_engine = agent_engine
         self.translate_engine = translate_engine
@@ -272,7 +278,10 @@ class ServiceContext:
         self.init_asr(config.character_config.asr_config)
 
         # init tts from character config
-        self.init_tts(config.character_config.tts_config)
+        self.init_tts(
+            config.character_config.tts_config,
+            getattr(config.character_config, "rvc_config", None),
+        )
 
         # init vad from character config
         self.init_vad(config.character_config.vad_config)
@@ -332,15 +341,43 @@ class ServiceContext:
         else:
             logger.info("ASR already initialized with the same config.")
 
-    def init_tts(self, tts_config: TTSConfig) -> None:
-        if not self.tts_engine or (self.character_config.tts_config != tts_config):
+    def init_tts(
+        self, tts_config: TTSConfig, rvc_config: Optional[RVCConfig] = None
+    ) -> None:
+        if (
+            not self.tts_engine
+            or (self.character_config.tts_config != tts_config)
+            or (getattr(self.character_config, "rvc_config", None) != rvc_config)
+        ):
             logger.info(f"Initializing TTS: {tts_config.tts_model}")
-            self.tts_engine = TTSFactory.get_tts_engine(
+            base_engine = TTSFactory.get_tts_engine(
                 tts_config.tts_model,
                 **getattr(tts_config, tts_config.tts_model.lower()).model_dump(),
             )
+            if rvc_config and rvc_config.enabled:
+                logger.info(
+                    f"RVC hook enabled! Initializing with model '{rvc_config.model_path}'..."
+                )
+                self.rvc_engine = RVCEngine(
+                    model_path=rvc_config.model_path,
+                    index_path=rvc_config.index_path,
+                    device=rvc_config.device,
+                    f0_up_key=rvc_config.f0_up_key,
+                    f0_method=rvc_config.f0_method,
+                    index_rate=rvc_config.index_rate,
+                    filter_radius=rvc_config.filter_radius,
+                    resample_sr=rvc_config.resample_sr,
+                    rms_mix_rate=rvc_config.rms_mix_rate,
+                    protect=rvc_config.protect,
+                )
+                self.tts_engine = RVCTTSWrapper(base_engine, self.rvc_engine)
+            else:
+                self.rvc_engine = None
+                self.tts_engine = base_engine
+
             # saving config should be done after successful initialization
             self.character_config.tts_config = tts_config
+            self.character_config.rvc_config = rvc_config
         else:
             logger.info("TTS already initialized with the same config.")
 

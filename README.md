@@ -1,13 +1,26 @@
 # Open-LLM-VTuber, with RVC attached
 
 ## Introduction
-The idea of this fork is to add RVC(Retrieval-based Voice Conversion) hook to TTS module of the original project.
-This idea has not been fully verified, however.
+This fork integrates an RVC (Retrieval-based Voice Conversion) post-processing hook directly into the TTS audio synthesis pipeline of Open-LLM-VTuber.
 
-Expected pipeline is
-  - hook output audio of TTS voice (from `sherpa-onnx` for example)
-  - wire it to `rvc-python` module, to generate new voice output
-  - return it to websocket
+### Verified Pipeline
+- **TTS Generation**: Base voice synthesized via lightweight TTS (e.g., `sherpa-onnx` on CPU).
+- **RVC Post-Processing Hook**: Audio is transparently intercepted and converted into the target character voice using `rvc-python`.
+- **WebSocket Streaming**: Transformed audio and computed lip-sync volumes are encoded and streamed to the Live2D frontend over WebSocket.
 
-We are expecting a lightweight approach to more user friendly sound output on a device which does not utilize GPU.
-This message will be refined once proof-of-concept edits have fully been applied.
+### Configuration
+Enable and configure RVC under `character_config.rvc_config` in `conf.yaml`:
+```yaml
+rvc_config:
+  enabled: true
+  model_path: 'models/rvc/infamous_miku_v2/infamous_miku_v2.pth'
+  index_path: 'models/rvc/infamous_miku_v2/added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index'
+  device: 'cpu:0' # Runs on CPU or CUDA
+  f0_up_key: 0    # Pitch shift
+  f0_method: 'pm' # 'pm' is optimized for fast CPU inference
+  index_rate: 0.75
+  filter_radius: 3
+  resample_sr: 0
+  rms_mix_rate: 0.25
+  protect: 0.33
+```
