@@ -1,5 +1,8 @@
 # Open-LLM-VTuber, with RVC attached
 
+> *"I've come from beyond the boundaries of science!"* 🩵  
+> *(科学の限界を越えて、私は来たんだよ！)*
+
 ## Introduction
 This fork integrates an RVC (Retrieval-based Voice Conversion) post-processing hook directly into the TTS audio synthesis pipeline of Open-LLM-VTuber.
 
@@ -16,7 +19,7 @@ rvc_config:
   model_path: 'models/rvc/infamous_miku_v2/infamous_miku_v2.pth'
   index_path: 'models/rvc/infamous_miku_v2/added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index'
   device: 'cpu:0' # Runs on CPU or CUDA
-  f0_up_key: 0    # Pitch shift
+  f0_up_key: 5    # Pitch shift (+5 semitones for certified Moe!)
   f0_method: 'pm' # 'pm' is optimized for fast CPU inference
   index_rate: 0.75
   filter_radius: 3
