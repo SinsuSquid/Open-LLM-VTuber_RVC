@@ -27,3 +27,16 @@ rvc_config:
   rms_mix_rate: 0.25
   protect: 0.33
 ```
+
+### Models & Assets
+
+#### Live2D Model
+- **Character**: Hatsune Miku (初音ミク) PRO Sample Model (`miku_pro`)
+- **Source**: [Live2D Sample Data - Hatsune Miku](https://www.live2d.com/en/learn/sample/hatsune-miku/)
+- **Illustration**: Crypton Future Media, INC. (クリプトン・フューチャー・メディア株式会社)
+- **Modeling**: Live2D Inc.
+- **Directory**: `live2d-models/miku_pro/` (configured in [`model_dict.json`](model_dict.json) and [`conf.yaml`](conf.yaml))
+
+#### RVC Voice Model
+- **Model**: `infamous_miku_v2` (Weights: `infamous_miku_v2.pth`, Index: `added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index`)
+- **Directory**: `models/rvc/infamous_miku_v2/`
