@@ -3,6 +3,9 @@
 > *"I've come from beyond the boundaries of science!"* 🩵  
 > *(科学の限界を越えて、私は来たんだよ！)*
 
+### 🩵 Dedicated to Hatsune Miku (初音ミク)
+This fork is wholeheartedly dedicated to the world's favorite virtual diva, **Hatsune Miku**. By combining real-time LLM conversational intelligence, official Live2D Cubism expression acting, and an RVC voice conversion pipeline tuned for maximum *moe*, this project brings the eternal cyber idol to life on any desktop.
+
 ## Introduction
 This fork integrates an RVC (Retrieval-based Voice Conversion) post-processing hook directly into the TTS audio synthesis pipeline of Open-LLM-VTuber.
 
