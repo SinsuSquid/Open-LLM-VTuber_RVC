@@ -51,3 +51,81 @@ rvc_config:
 - **Source**: [HuggingFace - javinfamous/infamous_miku_v2](https://huggingface.co/javinfamous/infamous_miku_v2)
 - **Creator**: [javinfamous](https://huggingface.co/javinfamous)
 - **Directory**: `models/rvc/infamous_miku_v2/`
+
+## Installation Guide (Hatsune Miku Setup)
+
+Follow these steps to set up the full conversational pipeline with Hatsune Miku:
+
+### 1. Environment & Dependencies
+Clone the repository and install dependencies in a Python virtual environment:
+```bash
+git clone https://github.com/SinsuSquid/Open-LLM-VTuber_RVC.git
+cd Open-LLM-VTuber_RVC
+
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
+*(Note: `rvc-python` requires `setuptools<70`, which is pinned in `requirements.txt` and `pyproject.toml`)*.
+
+### 2. Download Model Assets
+
+#### A. Live2D Model (`miku_pro`)
+1. Download the Hatsune Miku PRO sample model from [Live2D Sample Data](https://www.live2d.com/en/learn/sample/hatsune-miku/).
+2. Extract the archive into `live2d-models/miku_pro/` such that the runtime files are located at:
+   ```
+   live2d-models/miku_pro/
+   └── runtime/
+       ├── miku_sample_t04.model3.json
+       ├── miku_sample_t04.moc3
+       ├── miku_sample_t04.physics3.json
+       ├── miku_sample_t04.cdi3.json
+       ├── miku_sample_t04.2048/
+       └── motion/
+   ```
+   *(Pre-configured under `"miku_pro"` in [`model_dict.json`](model_dict.json))*.
+
+#### B. Base TTS Model (`sherpa-onnx` GLaDOS)
+1. Download `vits-piper-en_US-glados.tar.bz2` from the [sherpa-onnx TTS models release](https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models).
+2. Extract directly into the project root:
+   ```bash
+   tar -xvf vits-piper-en_US-glados.tar.bz2
+   ```
+   *(This extracts the folder `vits-piper-en_US-glados/` containing `en_US-glados.onnx`, `tokens.txt`, and `espeak-ng-data`)*.
+
+#### C. RVC Voice Model (`infamous_miku_v2`)
+1. Download `infamous_miku_v2.pth` and `added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index` from [HuggingFace - javinfamous/infamous_miku_v2](https://huggingface.co/javinfamous/infamous_miku_v2).
+2. Place them into `models/rvc/infamous_miku_v2/`:
+   ```
+   models/rvc/infamous_miku_v2/
+   ├── infamous_miku_v2.pth
+   └── added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index
+   ```
+
+### 3. Configuration
+Ensure `conf.yaml` has Miku and RVC configured:
+```yaml
+character_config:
+  live2d_model_name: 'miku_pro'
+  character_name: 'miku_pro'
+  rvc_config:
+    enabled: true
+    model_path: 'models/rvc/infamous_miku_v2/infamous_miku_v2.pth'
+    index_path: 'models/rvc/infamous_miku_v2/added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index'
+    device: 'cpu:0' # Runs on CPU or CUDA
+    f0_up_key: 5    # Pitch shift (+5 semitones for certified Moe!)
+    f0_method: 'pm' # 'pm' is optimized for fast CPU inference
+
+tts_config:
+  tts_model: 'sherpa_onnx_tts'
+```
+
+### 4. Run & Interact
+Start the server:
+```bash
+uv run run_server.py
+# or
+.venv/bin/python run_server.py
+```
+Open your browser at `http://localhost:12393`. Click or tap Miku on the canvas to trigger her reactive motions and blushing! 🩵
+
