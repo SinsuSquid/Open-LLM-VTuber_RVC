@@ -37,6 +37,12 @@ rvc_config:
 - **Modeling**: Live2D Inc.
 - **Directory**: `live2d-models/miku_pro/` (configured in [`model_dict.json`](model_dict.json) and [`conf.yaml`](conf.yaml))
 
+#### Base TTS Model (sherpa-onnx)
+- **Model**: `vits-piper-en_US-glados` (GLaDOS VITS ONNX model)
+- **Source**: [k2-fsa/sherpa-onnx TTS Models Release](https://github.com/k2-fsa/sherpa-onnx/releases/tag/tts-models)
+- **Engine**: [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)
+- **Directory**: `vits-piper-en_US-glados/`
+
 #### RVC Voice Model
 - **Model**: `infamous_miku_v2` (Weights: `infamous_miku_v2.pth`, Index: `added_IVF2983_Flat_nprobe_1_infamous_miku_v2_v2.index`)
 - **Source**: [HuggingFace - javinfamous/infamous_miku_v2](https://huggingface.co/javinfamous/infamous_miku_v2)
